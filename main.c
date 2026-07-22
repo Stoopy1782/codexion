@@ -6,36 +6,71 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/07/18 18:59:21 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/07/22 18:01:44 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.h"
 
-int	main(int argc, char **argv)
+int	init_scheduler(t_set *set, char *option)
 {
-	if (argc != 9){
-		printf("Unvalid option\n");
+	if (strcmp(option, "fifo") == 0)
+	{
+		set->scheduler = "fifo";
 		return (0);
 	}
-	int number_of_coders;
-	int time_to_burnout;
-	int time_to_compile;
-	int time_to_debug;
-	int time_to_refactor;
-	int number_of_compiles_required;
-	int dongle_cooldown;
-	char * scheduler;
+	else if (strcmp(option, "edf") == 0)
+	{
+		set->scheduler = "edf";
+		return (0);
+	}
+	return (1);
+}
 
-	number_of_coders = atoi(argv[1]);
-	time_to_burnout = atoi(argv[2]);
-	time_to_compile = atoi(argv[3]);
-	time_to_debug = atoi(argv[4]);
-	time_to_refactor = atoi(argv[5]);
-	number_of_compiles_required = atoi(argv[6]);
-	dongle_cooldown = atoi(argv[7]);
-	scheduler = argv[8];
-	parse(number_of_coders, time_to_burnout, time_to_compile, time_to_debug, time_to_refactor,
-	number_of_compiles_required, dongle_cooldown, scheduler);
+char*	validate_values(t_set *set)
+{
+	if (set->number_of_coders <= 0)
+		return("Number of coders must take natural number\n");
+	if (set->time_to_burnout <= 0)
+		return("Time to burnout must take natural number\n");
+	if (set->time_to_compile <= 0)
+		return("Time to compile must take natural number\n");
+	if (set->time_to_debug <= 0)
+		return("Time to debug must take natural number\n");
+	if (set->time_to_refactor <= 0)
+		return("Time to refactor must take natural number\n");
+	if (set->number_of_compiles_required <= 0)
+		return("Number of compiles required must take natural number\n");
+	if (set->dongle_cooldown <= 0)
+		return("Dongle cooldown required must take natural number\n");
+	return "OK";
+}
+
+void	parse_args(t_set *set, int argc, char **argv)
+{
+	if (argc != 9){
+		printf("Missing %d required arguments.\n", 9-argc);
+		return;
+	}
+	set->number_of_coders = atoi(argv[1]);
+	set->time_to_burnout = atoi(argv[2]);
+	set->time_to_compile = atoi(argv[3]);
+	set->time_to_debug = atoi(argv[4]);
+	set->time_to_refactor = atoi(argv[5]);
+	set->number_of_compiles_required = atoi(argv[6]);
+	set->dongle_cooldown = atoi(argv[7]);
+	char * val;
+	val = validate_values(set);
+	if (strcmp(val, "OK") != 0)
+		printf("%s", val);
+	else if (init_scheduler(set, argv[8]) != 0)
+		printf("Scheduler is invalid. Use 'edf' or 'fifo'\n");
+}
+
+int	main(int argc, char **argv)
+{
+	t_set	set;
+	memset(&set, 0, sizeof(t_set));
+	parse_args(&set, argc, argv);
 	return (0);
 }
