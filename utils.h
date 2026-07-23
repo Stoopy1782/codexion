@@ -23,6 +23,7 @@
 typedef struct s_dongle {
 	pthread_mutex_t	mutex;
 	long	available_time;
+	int	id;
 }	t_dongle;
 
 typedef struct s_set{

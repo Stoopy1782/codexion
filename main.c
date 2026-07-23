@@ -49,7 +49,7 @@ char*	validate_values(t_set *set)
 void	parse_args(t_set *set, int argc, char **argv)
 {
 	if (argc != 9){
-		printf("Missing %d required arguments.\n", 9-argc);
+		printf("Arguments is invalid. Check README.MD.\n");
 		return;
 	}
 	set->number_of_coders = atoi(argv[1]);
@@ -65,6 +65,7 @@ void	parse_args(t_set *set, int argc, char **argv)
 		printf("%s", val);
 	else if (init_scheduler(set, argv[8]) != 0)
 		printf("Scheduler is invalid. Use 'edf' or 'fifo'\n");
+		
 }
 
 int	main(int argc, char **argv)
