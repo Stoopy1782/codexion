@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/07/25 15:58:33 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/07/28 14:21:46 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,3 @@ typedef struct s_set{
 	int	is_finnished;
 	pthread_mutex_t	print_mutex;
 }	t_set;
-
-
-pthread_create, pthread_join, pthread_mutex_init,
-pthread_mutex_lock,
-pthread_mutex_unlock, pthread_mutex_destroy,
-pthread_cond_init,
-pthread_cond_wait, pthread_cond_timedwait,
-pthread_cond_signal,
-pthread_cond_broadcast, pthread_cond_destroy
-
