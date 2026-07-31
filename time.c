@@ -1,15 +1,11 @@
 #include "utils.h"
 
 
-int get_time()
+long	get_time(void)
 {
-    struct timeval time1;
-    struct timeval time2;
-    int spent_time;
-
-    gettimeofday(&time1, NULL);
-	sleep(1);
-    gettimeofday(&time2, NULL);
-    spent_time = time2.tv_usec - time1.tv_usec;
-    return (spent_time);
+    struct timeval time;
+    if (gettimeofday(&time, NULL) != 0)
+        return (0);
+	return ((long)(time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
+

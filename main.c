@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/07/25 14:57:41 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/07/31 19:38:19 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ int	main(int argc, char **argv)
 	if (parse_args(&set, argc, argv) == 0){
 		return (0);
 	}
-	printf("shori ireru");
+	set.start_time = get_time();
+	t_dongle *dongles = create_dondles(&set);
+	t_coder *coders = create_coders(&set, dongles);
+	start_simulation(&set, coders);
 	return (0);
 }
