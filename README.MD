@@ -89,4 +89,8 @@ https://www.mm2d.net/main/prog/c/time-01.html
 -[C言語]マルチスレッドを触ってみる
 https://zenn.dev/rinngo0302/articles/d1aa031137de9f
 
+-【C言語入門】sleep関数で一定時間停止(Sleep/usleepの違いも解説)
+https://www.sejuku.net/blog/48301
 
+-相互排他ロックの使用方法
+https://docs.oracle.com/cd/E19504-01/805-0672/6j0mrl70m/index.html
