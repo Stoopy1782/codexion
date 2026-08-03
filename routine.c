@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/02 20:05:12 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/03 18:02:30 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	release_dongles(t_coder *coder, t_dongle *dongles)
 {
 	int		first_dongle;
 	int		second_dongle;
-	long		now;
+	long	now;
 
 	first_dongle = coder->id - 1;
 	second_dongle = coder->id;
@@ -59,7 +59,9 @@ void	*routine(void *arg)
 	t_coder	*coder;
 
 	coder = (t_coder *)arg;
-	while (coder->set->is_stopped != 1)
+	if (coder->id % 2 == 0)
+		usleep(100);
+	while (is_stopped(coder->set) != 1)
 	{
 		take_dongles(coder, coder->dongles);
 		compile(coder);

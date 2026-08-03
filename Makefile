@@ -11,7 +11,8 @@ SRCS = \
 	time.c \
 	print.c \
 	coder_command.c \
-	monitor.c
+	monitor.c \
+	free.c
 
 OBJS = $(SRCS:.c=.o)
 

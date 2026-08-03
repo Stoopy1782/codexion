@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 14:45:58 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/02 20:11:02 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/03 18:03:44 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	check_stopped(t_coder *coder, int option, long now)
 		pthread_mutex_unlock(&coder->set->lock_s);
 		return (0);
 	}
-	if (coder->set->is_stopped != 0)
+	if (is_stopped(coder->set) != 0)
 	{
 		pthread_mutex_unlock(&coder->set->lock_s);
 		return (0);

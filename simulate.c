@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 17:21:26 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/02 20:09:44 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/03 15:06:03 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	create_threads(t_set *set, t_coder *coders)
 int	start_simulation(t_set *set, t_coder *coders)
 {
 	pthread_t	monitor_thread;
-	int		i;
+	int			i;
 
 	set_last_compile(set, coders);
 	if (create_threads(set, coders) != 0)
