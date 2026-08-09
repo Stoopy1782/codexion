@@ -6,36 +6,11 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/03 18:02:30 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/09 20:34:08 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.h"
-
-void	take_dongles(t_coder *coder, t_dongle *dongles)
-{
-	int	first_dongle;
-	int	second_dongle;
-
-	first_dongle = coder->id - 1;
-	second_dongle = coder->id;
-	if (coder->id == coder->set->number_of_coders)
-		second_dongle = 0;
-	if (first_dongle < second_dongle)
-	{
-		pthread_mutex_lock(&dongles[first_dongle].lock_d);
-		print_m(coder, 1);
-		pthread_mutex_lock(&dongles[second_dongle].lock_d);
-		print_m(coder, 1);
-	}
-	else
-	{
-		pthread_mutex_lock(&dongles[second_dongle].lock_d);
-		print_m(coder, 1);
-		pthread_mutex_lock(&dongles[first_dongle].lock_d);
-		print_m(coder, 1);
-	}
-}
 
 void	release_dongles(t_coder *coder, t_dongle *dongles)
 {
@@ -50,6 +25,10 @@ void	release_dongles(t_coder *coder, t_dongle *dongles)
 	now = get_time();
 	dongles[first_dongle].available_time = now + coder->set->dongle_cooldown;
 	dongles[second_dongle].available_time = now + coder->set->dongle_cooldown;
+	dongles[first_dongle].first_coder = NULL;
+	dongles[first_dongle].second_coder = NULL;
+	dongles[second_dongle].first_coder = NULL;
+	dongles[second_dongle].second_coder = NULL;
 	pthread_mutex_unlock(&dongles[first_dongle].lock_d);
 	pthread_mutex_unlock(&dongles[second_dongle].lock_d);
 }

@@ -6,13 +6,14 @@ RM = rm -f
 SRCS = \
 	main.c \
 	routine.c \
+	scheduler.c \
 	setup.c \
 	simulate.c \
 	time.c \
 	print.c \
 	coder_command.c \
 	monitor.c \
-	free.c
+	free.c \
 
 OBJS = $(SRCS:.c=.o)
 

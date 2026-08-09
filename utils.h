@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/03 19:43:36 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/09 20:34:00 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+
+typedef struct s_dongle	t_dongle;
 
 typedef struct s_set
 {
@@ -37,15 +39,6 @@ typedef struct s_set
 	pthread_mutex_t	lock_s;
 }	t_set;
 
-typedef struct s_dongle
-{
-	long			available_time;
-	int				id;
-	t_set			*set;
-	pthread_mutex_t	lock_d;
-	pthread_mutex_t	lock_sch;
-}		t_dongle;
-
 typedef struct s_coder
 {
 	int				id;
@@ -58,6 +51,17 @@ typedef struct s_coder
 	pthread_mutex_t	lock_c;
 }		t_coder;
 
+typedef struct s_dongle
+{
+	long			available_time;
+	int				id;
+	t_coder			*first_coder;
+	t_coder			*second_coder;
+	t_set			*set;
+	pthread_mutex_t	lock_d;
+	pthread_mutex_t	lock_sch;
+}		t_dongle;
+
 long		get_time(void);
 void		*routine(void *arg);
 int			start_simulation(t_set *set, t_coder *coders);
@@ -68,6 +72,7 @@ void		compile(t_coder *coder);
 void		debug(t_coder *coder);
 void		refactor(t_coder *coder);
 void		burn_out(t_coder *coder);
+void		take_dongles(t_coder *coder, t_dongle *dongles);
 void		*monitor(void *arg);
 void		free_all(t_set *set, t_coder *coders);
 int			is_stopped(t_set *set);
