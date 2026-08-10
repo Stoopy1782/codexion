@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/03 17:38:48 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/09 18:18:12 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/10 16:43:22 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	free_all(t_set *set, t_coder *coders)
 	{
 		pthread_mutex_destroy(&coders->dongles[i].lock_d);
 		pthread_mutex_destroy(&coders->dongles[i].lock_sch);
+		pthread_cond_destroy(&coders->dongles[i].lock_start);
 		pthread_mutex_destroy(&coders[i].lock_c);
 		i++;
 	}

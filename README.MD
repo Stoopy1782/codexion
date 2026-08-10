@@ -94,3 +94,6 @@ https://www.sejuku.net/blog/48301
 
 -相互排他ロックの使用方法
 https://docs.oracle.com/cd/E19504-01/805-0672/6j0mrl70m/index.html
+
+-Pthreads Programming
+by Nichols, Buttlar, and Farrell (O'Reilly Media)

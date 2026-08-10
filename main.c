@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/03 19:09:59 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/10 16:59:37 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	init_scheduler(t_set *set, char *option)
 
 char	*validate_values(t_set *set)
 {
-	if (set->number_of_coders <= 1)
+	if (set->number_of_coders <= 0)
 		return ("Number of coders needs at least 1.\n");
 	if (set->time_to_burnout <= 0)
 		return ("Time to burnout must take natural number.\n");
@@ -98,7 +98,7 @@ int	main(int argc, char **argv)
 	if (parse_args(&set, argc, argv) == 0)
 		return (0);
 	set.start_time = get_time();
-	dongles = create_dondles(&set);
+	dongles = create_dongles(&set);
 	if (!dongles)
 		return (1);
 	coders = create_coders(&set, dongles);

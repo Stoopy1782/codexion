@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/09 20:34:00 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/08/10 18:40:05 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ typedef struct s_coder
 	t_set			*set;
 	pthread_t		thread;
 	pthread_mutex_t	lock_c;
-}		t_coder;
+}	t_coder;
 
 typedef struct s_dongle
 {
@@ -60,21 +60,23 @@ typedef struct s_dongle
 	t_set			*set;
 	pthread_mutex_t	lock_d;
 	pthread_mutex_t	lock_sch;
-}		t_dongle;
+	pthread_cond_t	lock_start;
+}	t_dongle;
 
-long		get_time(void);
-void		*routine(void *arg);
-int			start_simulation(t_set *set, t_coder *coders);
-t_dongle	*create_dondles(t_set *set);
-t_coder		*create_coders(t_set *set, t_dongle *dongles);
-void		print_m(t_coder *coder, int option);
-void		compile(t_coder *coder);
-void		debug(t_coder *coder);
-void		refactor(t_coder *coder);
-void		burn_out(t_coder *coder);
-void		take_dongles(t_coder *coder, t_dongle *dongles);
-void		*monitor(void *arg);
-void		free_all(t_set *set, t_coder *coders);
-int			is_stopped(t_set *set);
+long			get_time(void);
+void			*routine(void *arg);
+int				start_simulation(t_set *set, t_coder *coders);
+t_dongle		*create_dongles(t_set *set);
+t_coder			*create_coders(t_set *set, t_dongle *dongles);
+void			print_m(t_coder *coder, int option);
+void			compile(t_coder *coder);
+void			debug(t_coder *coder);
+void			refactor(t_coder *coder);
+void			burn_out(t_coder *coder);
+void			take_dongles(t_coder *coder, t_dongle *dongles);
+void			*monitor(void *arg);
+void			free_all(t_set *set, t_coder *coders);
+int				is_stopped(t_set *set);
+struct timespec	get_abstime(long available_time);
 
 #endif
