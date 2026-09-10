@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/10 18:40:05 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/03 16:54:20 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+#include <limits.h>
 
 typedef struct s_dongle	t_dongle;
 
@@ -78,5 +79,6 @@ void			*monitor(void *arg);
 void			free_all(t_set *set, t_coder *coders);
 int				is_stopped(t_set *set);
 struct timespec	get_abstime(long available_time);
+int				safe_atoi(const char *str);
 
 #endif

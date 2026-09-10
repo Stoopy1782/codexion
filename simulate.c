@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 17:21:26 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/03 15:06:03 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/10 16:28:21 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	set_last_compile(t_set *set, t_coder *coders)
 	}
 }
 
-static int	create_threads(t_set *set, t_coder *coders)
+int	create_threads(t_set *set, t_coder *coders)
 {
 	int	i;
 

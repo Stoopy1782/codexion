@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/10 16:59:37 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/03 17:00:55 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 int	set_values(t_set *set, char **argv)
 {
-	set->number_of_coders = atoi(argv[1]);
-	set->time_to_burnout = atoi(argv[2]);
-	set->time_to_compile = atoi(argv[3]);
-	set->time_to_debug = atoi(argv[4]);
-	set->time_to_refactor = atoi(argv[5]);
-	set->number_of_compiles_required = atoi(argv[6]);
-	set->dongle_cooldown = atoi(argv[7]);
+	set->number_of_coders = safe_atoi(argv[1]);
+	set->time_to_burnout = safe_atoi(argv[2]);
+	set->time_to_compile = safe_atoi(argv[3]);
+	set->time_to_debug = safe_atoi(argv[4]);
+	set->time_to_refactor = safe_atoi(argv[5]);
+	set->number_of_compiles_required = safe_atoi(argv[6]);
+	set->dongle_cooldown = safe_atoi(argv[7]);
 	set->is_stopped = 0;
 	if (pthread_mutex_init(&set->lock_s, NULL) != 0)
 		return (1);
@@ -47,19 +47,19 @@ int	init_scheduler(t_set *set, char *option)
 char	*validate_values(t_set *set)
 {
 	if (set->number_of_coders <= 0)
-		return ("Number of coders needs at least 1.\n");
+		return ("Number of coders is invalid.\n");
 	if (set->time_to_burnout <= 0)
-		return ("Time to burnout must take natural number.\n");
+		return ("Time to burnout is invalid.\n");
 	if (set->time_to_compile <= 0)
-		return ("Time to compile must take natural number.\n");
+		return ("Time to compile is invalid.\n");
 	if (set->time_to_debug <= 0)
-		return ("Time to debug must take natural number.\n");
+		return ("Time to debug is invalid.\n");
 	if (set->time_to_refactor <= 0)
-		return ("Time to refactor must take natural number.\n");
+		return ("Time to refactor is invalid.\n");
 	if (set->number_of_compiles_required <= 0)
-		return ("Number of compiles required must take natural number.\n");
+		return ("Number of compiles is invalid.\n");
 	if (set->dongle_cooldown <= 0)
-		return ("Dongle cooldown required must take natural number.\n");
+		return ("Dongle cooldown required is invalid.\n");
 	return ("OK");
 }
 
@@ -73,7 +73,7 @@ int	parse_args(t_set *set, int argc, char **argv)
 		return (0);
 	}
 	if (set_values(set, argv) == 1)
-		return (1);
+		return (0);
 	val = validate_values(set);
 	if (strcmp(val, "OK") != 0)
 	{

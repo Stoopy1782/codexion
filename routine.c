@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/10 18:49:50 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/10 15:37:10 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,18 @@ void	release_dongles(t_coder *coder, t_dongle *dongles)
 	pthread_mutex_unlock(&dongles[second_dongle].lock_d);
 }
 
+int	check_compile_limit(t_coder *coder)
+{
+	int	count;
+	pthread_mutex_lock(&coder->lock_c);
+	count = coder->compile_count;
+	pthread_mutex_unlock(&coder->lock_c);
+	return (count >= coder->set->number_of_compiles_required);
+}
+
 void	*routine(void *arg)
 {
 	t_coder	*coder;
-
 	coder = (t_coder *)arg;
 	if (coder->set->number_of_coders == 1)
 	{
@@ -60,7 +68,7 @@ void	*routine(void *arg)
 		release_dongles(coder, coder->dongles);
 		debug(coder);
 		refactor(coder);
-		if (coder->compile_count >= coder->set->number_of_compiles_required)
+		if (check_compile_limit(coder))
 			break ;
 	}
 	return (NULL);

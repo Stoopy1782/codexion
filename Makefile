@@ -14,6 +14,7 @@ SRCS = \
 	coder_command.c \
 	monitor.c \
 	free.c \
+	safe_atoi.c \
 
 OBJS = $(SRCS:.c=.o)
 

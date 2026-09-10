@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 14:48:58 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/03 18:30:32 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/10 15:28:41 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,5 @@ void	refactor(t_coder *coder)
 	{
 		print_m(coder, 4);
 		usleep(coder->set->time_to_refactor * 1000);
-	}
-}
-
-void	burn_out(t_coder *coder)
-{
-	if (is_stopped(coder->set) != 1)
-	{
-		print_m(coder, 5);
-		pthread_mutex_lock(&coder->lock_c);
-		coder->is_burnout = 1;
-		pthread_mutex_unlock(&coder->lock_c);
-		pthread_mutex_lock(&coder->set->lock_stop);
-		coder->set->is_stopped = 1;
-		pthread_mutex_unlock(&coder->set->lock_stop);
 	}
 }

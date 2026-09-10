@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/03 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/10 18:50:11 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/10 15:38:14 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,28 @@ void	request_dongle(t_coder *coder, t_dongle *dongle)
 		dongle->second_coder = coder;
 }
 
+long	get_last_compile(t_coder *coder)
+{
+	long	last_compile;
+
+	pthread_mutex_lock(&coder->lock_c);
+	last_compile = coder->last_compile;
+	pthread_mutex_unlock(&coder->lock_c);
+	return (last_compile);
+}
+
 t_coder	*pick_first(t_coder *coder, t_dongle *dongle)
 {
+	long	first_last;
+	long	second_last;
+
 	if (!dongle->second_coder)
 		return (dongle->first_coder);
 	if (coder->set->scheduler == 0)
 		return (dongle->first_coder);
-	if (dongle->first_coder->last_compile
-		< dongle->second_coder->last_compile)
+	first_last = get_last_compile(dongle->first_coder);
+	second_last = get_last_compile(dongle->second_coder);
+	if (first_last < second_last)
 		return (dongle->first_coder);
 	else
 		return (dongle->second_coder);
