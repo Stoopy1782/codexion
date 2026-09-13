@@ -58,7 +58,7 @@ char	*validate_values(t_set *set)
 		return ("Time to refactor is invalid.\n");
 	if (set->number_of_compiles_required <= 0)
 		return ("Number of compiles is invalid.\n");
-	if (set->dongle_cooldown <= 0)
+	if (set->dongle_cooldown < 0)
 		return ("Dongle cooldown required is invalid.\n");
 	return ("OK");
 }

@@ -19,7 +19,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
-#include <limits.h>
+# include <limits.h>
 
 typedef struct s_dongle	t_dongle;
 
@@ -56,10 +56,10 @@ typedef struct s_dongle
 {
 	long			available_time;
 	int				id;
+	int				in_use;
 	t_coder			*first_coder;
 	t_coder			*second_coder;
 	t_set			*set;
-	pthread_mutex_t	lock_d;
 	pthread_mutex_t	lock_sch;
 	pthread_cond_t	lock_start;
 }	t_dongle;
@@ -74,7 +74,10 @@ void			compile(t_coder *coder);
 void			debug(t_coder *coder);
 void			refactor(t_coder *coder);
 void			burn_out(t_coder *coder);
-void			take_dongles(t_coder *coder, t_dongle *dongles);
+int				take_dongles(t_coder *coder, t_dongle *dongles);
+void			release_dongles(t_coder *coder, t_dongle *dongles);
+int				acquire_dongle(t_coder *coder, t_dongle *dongle);
+void			release_one_dongle(t_coder *c, t_dongle *d, int is_used);
 void			*monitor(void *arg);
 void			free_all(t_set *set, t_coder *coders);
 int				is_stopped(t_set *set);

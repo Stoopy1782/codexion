@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 17:21:26 by ykojima           #+#    #+#             */
-/*   Updated: 2026/08/03 18:36:08 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/12 17:15:00 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,21 @@ int	is_stopped(t_set *set)
 	return (status);
 }
 
-int	check_burnout(t_coder *coders, t_set *set)
+static int	check_burnout(t_coder *coders, t_set *set)
 {
 	int		i;
-	long	last_compile;
+	long	last;
+	int		count;
 
 	i = 0;
 	while (i < set->number_of_coders)
 	{
 		pthread_mutex_lock(&coders[i].lock_c);
-		last_compile = coders[i].last_compile;
+		last = coders[i].last_compile;
+		count = coders[i].compile_count;
 		pthread_mutex_unlock(&coders[i].lock_c);
-		if (get_time() - last_compile > set->time_to_burnout)
+		if (count < set->number_of_compiles_required
+			&& get_time() - last > set->time_to_burnout)
 		{
 			pthread_mutex_lock(&set->lock_stop);
 			set->is_stopped = 1;
@@ -46,7 +49,7 @@ int	check_burnout(t_coder *coders, t_set *set)
 	return (0);
 }
 
-int	check_finnished(t_coder *coders, t_set *set)
+static int	check_finnished(t_coder *coders, t_set *set)
 {
 	int	i;
 	int	count;
@@ -73,8 +76,6 @@ void	*monitor(void *arg)
 	set = coders[0].set;
 	while (is_stopped(set) != 1)
 	{
-		if (check_burnout(coders, set) == 1)
-			return (NULL);
 		if (check_finnished(coders, set) == 1)
 		{
 			pthread_mutex_lock(&set->lock_stop);
@@ -82,6 +83,8 @@ void	*monitor(void *arg)
 			pthread_mutex_unlock(&set->lock_stop);
 			break ;
 		}
+		if (check_burnout(coders, set) == 1)
+			return (NULL);
 		usleep(1000);
 	}
 	return (NULL);

@@ -19,7 +19,6 @@ void	free_all(t_set *set, t_coder *coders)
 	i = 0;
 	while (i < set->number_of_coders)
 	{
-		pthread_mutex_destroy(&coders->dongles[i].lock_d);
 		pthread_mutex_destroy(&coders->dongles[i].lock_sch);
 		pthread_cond_destroy(&coders->dongles[i].lock_start);
 		pthread_mutex_destroy(&coders[i].lock_c);

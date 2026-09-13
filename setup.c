@@ -49,11 +49,10 @@ t_dongle	*create_dongles(t_set *set)
 	{
 		dongles[i].id = i + 1;
 		dongles[i].available_time = 0;
+		dongles[i].in_use = 0;
 		dongles[i].set = set;
 		dongles[i].first_coder = NULL;
 		dongles[i].second_coder = NULL;
-		if (pthread_mutex_init(&dongles[i].lock_d, NULL) != 0)
-			return (NULL);
 		if (pthread_mutex_init(&dongles[i].lock_sch, NULL) != 0)
 			return (NULL);
 		if (pthread_cond_init(&dongles[i].lock_start, NULL) != 0)

@@ -6,95 +6,99 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/03 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/09/10 15:38:14 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/12 17:15:00 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.h"
 
-void	request_dongle(t_coder *coder, t_dongle *dongle)
+static void	update_queue(t_coder *coder, t_dongle *dongle, int action)
 {
-	if (!dongle->first_coder)
-		dongle->first_coder = coder;
-	else if (dongle->first_coder != coder)
-		dongle->second_coder = coder;
+	if (action == 0)
+	{
+		if (!dongle->first_coder)
+			dongle->first_coder = coder;
+		else if (dongle->first_coder != coder && !dongle->second_coder)
+			dongle->second_coder = coder;
+	}
+	else
+	{
+		if (dongle->first_coder == coder)
+		{
+			dongle->first_coder = dongle->second_coder;
+			dongle->second_coder = NULL;
+		}
+		else if (dongle->second_coder == coder)
+			dongle->second_coder = NULL;
+	}
 }
 
-long	get_last_compile(t_coder *coder)
+static t_coder	*pick_first(t_dongle *dongle)
 {
-	long	last_compile;
-
-	pthread_mutex_lock(&coder->lock_c);
-	last_compile = coder->last_compile;
-	pthread_mutex_unlock(&coder->lock_c);
-	return (last_compile);
-}
-
-t_coder	*pick_first(t_coder *coder, t_dongle *dongle)
-{
-	long	first_last;
-	long	second_last;
+	long	d1;
+	long	d2;
 
 	if (!dongle->second_coder)
 		return (dongle->first_coder);
-	if (coder->set->scheduler == 0)
+	if (dongle->set->scheduler == 0)
 		return (dongle->first_coder);
-	first_last = get_last_compile(dongle->first_coder);
-	second_last = get_last_compile(dongle->second_coder);
-	if (first_last < second_last)
+	pthread_mutex_lock(&dongle->first_coder->lock_c);
+	d1 = dongle->first_coder->last_compile + dongle->set->time_to_burnout;
+	pthread_mutex_unlock(&dongle->first_coder->lock_c);
+	pthread_mutex_lock(&dongle->second_coder->lock_c);
+	d2 = dongle->second_coder->last_compile + dongle->set->time_to_burnout;
+	pthread_mutex_unlock(&dongle->second_coder->lock_c);
+	if (d1 <= d2)
 		return (dongle->first_coder);
-	else
-		return (dongle->second_coder);
+	return (dongle->second_coder);
 }
 
-int	order_dongles(t_coder *coder, t_dongle *dongle)
+static int	wait_or_take(t_coder *coder, t_dongle *dongle)
 {
 	struct timespec	ts;
 
-	pthread_mutex_lock(&dongle->lock_sch);
-	while (dongle->available_time > get_time())
+	if (!dongle->in_use && get_time() >= dongle->available_time
+		&& coder == pick_first(dongle))
 	{
-		if (is_stopped(coder->set))
-		{
-			pthread_mutex_unlock(&dongle->lock_sch);
-			return (1);
-		}
-		ts = get_abstime(dongle->available_time);
-		if (pthread_cond_timedwait(&dongle->lock_start,
-				&dongle->lock_sch, &ts) != 0)
-			break ;
-	}
-	request_dongle(coder, dongle);
-	if (coder == pick_first(coder, dongle))
-	{
+		dongle->in_use = 1;
+		update_queue(coder, dongle, 1);
 		pthread_mutex_unlock(&dongle->lock_sch);
-		pthread_mutex_lock(&dongle->lock_d);
 		print_m(coder, 1);
 		return (0);
 	}
+	if (dongle->available_time > get_time())
+	{
+		ts = get_abstime(dongle->available_time);
+		pthread_cond_timedwait(&dongle->lock_start, &dongle->lock_sch, &ts);
+	}
+	else
+		pthread_cond_wait(&dongle->lock_start, &dongle->lock_sch);
+	return (-1);
+}
+
+int	acquire_dongle(t_coder *coder, t_dongle *dongle)
+{
+	int	res;
+
+	pthread_mutex_lock(&dongle->lock_sch);
+	update_queue(coder, dongle, 0);
+	while (!is_stopped(coder->set))
+	{
+		res = wait_or_take(coder, dongle);
+		if (res == 0)
+			return (0);
+	}
+	update_queue(coder, dongle, 1);
 	pthread_mutex_unlock(&dongle->lock_sch);
 	return (1);
 }
 
-void	take_dongles(t_coder *coder, t_dongle *dongles)
+void	release_one_dongle(t_coder *coder, t_dongle *dongle, int is_used)
 {
-	int	first_dongle;
-	int	second_dongle;
-
-	first_dongle = coder->id - 1;
-	second_dongle = coder->id;
-	if (coder->id == coder->set->number_of_coders)
-		second_dongle = 0;
-	if (first_dongle > second_dongle)
-	{
-		first_dongle = second_dongle;
-		second_dongle = coder->id - 1;
-	}
-	if (order_dongles(coder, &dongles[first_dongle]) == 0)
-	{
-		if (order_dongles(coder, &dongles[second_dongle]) != 0)
-		{
-			pthread_mutex_unlock(&dongles[first_dongle].lock_d);
-		}
-	}
+	pthread_mutex_lock(&dongle->lock_sch);
+	dongle->in_use = 0;
+	if (is_used)
+		dongle->available_time = get_time() + coder->set->dongle_cooldown;
+	pthread_cond_broadcast(&dongle->lock_start);
+	pthread_mutex_unlock(&dongle->lock_sch);
 }
