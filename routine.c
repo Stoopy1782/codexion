@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 14:49:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/09/12 17:15:00 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/13 14:56:54 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,13 @@ void	release_dongles(t_coder *coder, t_dongle *dongles)
 	second = coder->id;
 	if (coder->id == coder->set->number_of_coders)
 		second = 0;
-	release_one_dongle(coder, &dongles[first], 1);
+	if (first > second)
+	{
+		first = second;
+		second = coder->id - 1;
+	}
 	release_one_dongle(coder, &dongles[second], 1);
+	release_one_dongle(coder, &dongles[first], 1);
 }
 
 int	take_dongles(t_coder *coder, t_dongle *dongles)
@@ -83,10 +88,10 @@ void	*routine(void *arg)
 			break ;
 		compile(coder);
 		release_dongles(coder, coder->dongles);
-		debug(coder);
-		refactor(coder);
 		if (check_compile_limit(coder))
 			break ;
+		debug(coder);
+		refactor(coder);
 	}
 	return (NULL);
 }

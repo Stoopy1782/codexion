@@ -6,14 +6,25 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/09/03 17:00:55 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/13 14:01:35 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.h"
 
+void	init_scheduler(t_set *set, char *option)
+{
+	if (strcmp(option, "fifo") == 0)
+		set->scheduler = 0;
+	else if (strcmp(option, "edf") == 0)
+		set->scheduler = 1;
+	else
+		set->scheduler = -1;
+}
+
 int	set_values(t_set *set, char **argv)
 {
+	set->is_stopped = 0;
 	set->number_of_coders = safe_atoi(argv[1]);
 	set->time_to_burnout = safe_atoi(argv[2]);
 	set->time_to_compile = safe_atoi(argv[3]);
@@ -21,27 +32,12 @@ int	set_values(t_set *set, char **argv)
 	set->time_to_refactor = safe_atoi(argv[5]);
 	set->number_of_compiles_required = safe_atoi(argv[6]);
 	set->dongle_cooldown = safe_atoi(argv[7]);
-	set->is_stopped = 0;
+	init_scheduler(set, argv[8]);
 	if (pthread_mutex_init(&set->lock_s, NULL) != 0)
 		return (1);
 	if (pthread_mutex_init(&set->lock_stop, NULL) != 0)
 		return (1);
 	return (0);
-}
-
-int	init_scheduler(t_set *set, char *option)
-{
-	if (strcmp(option, "fifo") == 0)
-	{
-		set->scheduler = 0;
-		return (0);
-	}
-	else if (strcmp(option, "edf") == 0)
-	{
-		set->scheduler = 1;
-		return (0);
-	}
-	return (1);
 }
 
 char	*validate_values(t_set *set)
@@ -60,6 +56,8 @@ char	*validate_values(t_set *set)
 		return ("Number of compiles is invalid.\n");
 	if (set->dongle_cooldown < 0)
 		return ("Dongle cooldown required is invalid.\n");
+	if (set->scheduler < 0)
+		return ("Scheduler is invalid. Use 'edf' or 'fifo'.\n");
 	return ("OK");
 }
 
@@ -78,11 +76,6 @@ int	parse_args(t_set *set, int argc, char **argv)
 	if (strcmp(val, "OK") != 0)
 	{
 		printf("%s", val);
-		return (0);
-	}
-	else if (init_scheduler(set, argv[8]) != 0)
-	{
-		printf("Scheduler is invalid. Use 'edf' or 'fifo'.\n");
 		return (0);
 	}
 	return (1);

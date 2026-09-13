@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 16:51:51 by ykojima           #+#    #+#             */
-/*   Updated: 2026/09/03 16:54:20 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/13 15:29:26 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ typedef struct s_set
 	int				dongle_cooldown;
 	int				scheduler;
 	int				is_stopped;
-	int				is_finnished;
 	long			start_time;
 	pthread_mutex_t	lock_stop;
 	pthread_mutex_t	lock_s;
@@ -45,7 +44,6 @@ typedef struct s_coder
 	int				id;
 	int				compile_count;
 	long			last_compile;
-	int				is_burnout;
 	t_dongle		*dongles;
 	t_set			*set;
 	pthread_t		thread;
@@ -55,7 +53,6 @@ typedef struct s_coder
 typedef struct s_dongle
 {
 	long			available_time;
-	int				id;
 	int				in_use;
 	t_coder			*first_coder;
 	t_coder			*second_coder;
@@ -73,11 +70,9 @@ void			print_m(t_coder *coder, int option);
 void			compile(t_coder *coder);
 void			debug(t_coder *coder);
 void			refactor(t_coder *coder);
-void			burn_out(t_coder *coder);
-int				take_dongles(t_coder *coder, t_dongle *dongles);
-void			release_dongles(t_coder *coder, t_dongle *dongles);
 int				acquire_dongle(t_coder *coder, t_dongle *dongle);
-void			release_one_dongle(t_coder *c, t_dongle *d, int is_used);
+void			release_one_dongle(t_coder *coder, t_dongle *dongle,
+					int is_used);
 void			*monitor(void *arg);
 void			free_all(t_set *set, t_coder *coders);
 int				is_stopped(t_set *set);

@@ -6,7 +6,7 @@
 /*   By: ykojima <ykojima@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 17:21:26 by ykojima           #+#    #+#             */
-/*   Updated: 2026/09/12 17:15:00 by ykojima          ###   ########.fr       */
+/*   Updated: 2026/09/13 15:21:58 by ykojima          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	check_burnout(t_coder *coders, t_set *set)
 	return (0);
 }
 
-static int	check_finnished(t_coder *coders, t_set *set)
+static int	check_finished(t_coder *coders, t_set *set)
 {
 	int	i;
 	int	count;
@@ -76,7 +76,7 @@ void	*monitor(void *arg)
 	set = coders[0].set;
 	while (is_stopped(set) != 1)
 	{
-		if (check_finnished(coders, set) == 1)
+		if (check_finished(coders, set) == 1)
 		{
 			pthread_mutex_lock(&set->lock_stop);
 			set->is_stopped = 1;
